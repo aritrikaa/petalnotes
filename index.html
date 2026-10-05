@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Petal Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#000;--pk:#ffc2d9;--pk2:#ff8fb8;--lv:#c9b3f2;--cr:#fbf3e4;--card:#16121a}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bk);color:var(--cr);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-x:hidden;line-height:1.5}
+button,input,select,textarea{font:inherit}
+h1,h2,h3{margin:.2em 0}
+.script,h1,.paper{font-family:"Dancing Script","Brush Script MT",cursive}
+:focus-visible{outline:3px solid var(--lv);outline-offset:2px}
+.btn{border:0;border-radius:999px;padding:.6rem 1.1rem;min-height:44px;cursor:pointer;font-weight:600;background:var(--pk);color:#1a1a1a}
+.btn.lv{background:var(--lv)}
+.btn.gh{background:transparent;color:var(--cr);border:1px solid #fff4}
+.btn.sm{padding:.3rem .8rem;min-height:38px;font-size:.9rem}
+.row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.end{justify-content:flex-end;margin-top:1rem}
+.muted{opacity:.7;font-size:.9rem}
+.wrap{max-width:1100px;margin:0 auto;padding:1rem}
+.top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.8rem;align-items:center;padding:.5rem 0 1rem;border-bottom:1px dashed #ffc2d955;margin-bottom:1rem}
+.top h1{font-size:2.4rem;color:var(--pk);margin:0}
+.sub{margin:0;opacity:.8}
+.bd{background:var(--pk2);color:#000;border-radius:99px;padding:0 .45rem;font-size:.8rem;margin-left:.3rem}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+.cols>*{min-width:0}
+@media(max-width:800px){.cols{grid-template-columns:1fr}}
+.sh{display:flex;justify-content:space-between;align-items:center;gap:.5rem;margin-bottom:.6rem}
+.card{background:var(--card);border:1px solid #ffc2d933;border-radius:20px;padding:1rem;margin-bottom:.8rem;box-shadow:0 6px 18px #ff8fb812}
+.card h3{color:var(--pk)}
+.bc{display:grid;grid-template-columns:110px 1fr;gap:.8rem}
+.th{width:110px}
+.empty{padding:1.5rem;text-align:center;border:1px dashed #fff4;border-radius:20px}
+/* login */
+.login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem}
+.lc{width:min(400px,100%);background:#17101a;border:2px solid var(--pk);border-radius:32px;padding:1.6rem;text-align:center;box-shadow:0 0 40px #ff8fb82e}
+.lc h1{font-size:3rem;color:var(--pk);margin:0}
+.lc label{display:block;text-align:left;margin:.7rem 0 .2rem}
+.lc .btn{width:100%;margin-top:1rem}
+.err{color:#ff9aa8;min-height:1.4em;margin:.5rem 0 0}
+.hint{margin-top:1.2rem;font-size:.9rem;opacity:.8}
+input,select,textarea{width:100%;background:#0d0a10;color:var(--cr);border:1px solid #ffc2d966;border-radius:14px;padding:.65rem .8rem;min-height:44px}
+label{display:block;margin:.6rem 0 .2rem;font-size:.95rem}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+@media(max-width:480px){.g2{grid-template-columns:1fr}}
+/* overlays */
+.ov{position:fixed;inset:0;background:#000c;display:flex;align-items:flex-start;justify-content:center;padding:12px;z-index:10;overflow:auto}
+.ov.ask{z-index:40;align-items:center}
+.dlg{background:#1a1520;border:1px solid #ffc2d944;border-radius:22px;width:min(640px,100%);padding:1.2rem;position:relative;margin:auto}
+.ov.full .dlg{width:min(820px,100%)}
+.x{position:sticky;float:right;top:0;border:0;background:#fff2;color:var(--cr);border-radius:50%;width:44px;height:44px;cursor:pointer;font-size:1.1rem}
+.body{white-space:pre-wrap;background:var(--cr);color:#2b2230;border-radius:14px;padding:1rem;margin:.6rem 0;overflow-wrap:anywhere}
+.cm{border-left:3px solid var(--lv);padding:.2rem .7rem;margin:.6rem 0;overflow-wrap:anywhere}
+.cm.mine{border-color:var(--pk)}
+.cm p{margin:.2rem 0;white-space:pre-wrap}
+.chips{display:flex;flex-wrap:wrap;gap:.5rem}
+.chip{display:flex;align-items:center;gap:.4rem;margin:0;border:1px solid #fff4;border-radius:99px;padding:.3rem .8rem;min-height:44px}
+.chip input{width:auto;min-height:0}
+.fr{display:flex;align-items:center;gap:.5rem;margin:.3rem 0}
+.fr span{flex:1}
+.fr b{min-width:1.5rem;text-align:center}
+.pv{width:min(240px,70%);margin:.6rem auto}
+.nt{display:block;width:100%;text-align:left;background:#0d0a10;color:var(--cr);border:1px solid #fff3;border-radius:14px;padding:.7rem;margin:.4rem 0;cursor:pointer}
+.nt.unread{border-color:var(--pk2)}
+.nt small{display:block;opacity:.6}
+/* bouquet experience */
+.ov.bq{background:radial-gradient(circle at 50% 35%,#3a1530,#000 70%)}
+.ov.bq .dlg{background:none;border:0;width:100%;text-align:center}
+.bt{font-size:1.5rem;color:var(--pk)}
+.stage{width:min(420px,90vw,58vh);margin:0 auto}
+.script{font-size:1.8rem;color:var(--cr);margin:.2rem}
+.fab{position:fixed;right:14px;bottom:14px;background:var(--pk2);z-index:11}
+.bq-svg{width:100%;height:auto;display:block;overflow:visible}
+.hit{cursor:pointer}
+.lt{transition:transform .6s}
+.open .lt{transform:translateY(-34px)}
+.sw{animation:sw 4s ease-in-out infinite}
+.a-calm .sw{animation-duration:9s}
+.a-none .sw{animation:none}
+.rise{animation:rise .9s ease-out}
+@keyframes sw{0%,100%{transform:rotate(-2.5deg)}50%{transform:rotate(2.5deg)}}
+@keyframes rise{from{opacity:0;transform:translateY(30px) scale(.94)}to{opacity:1;transform:none}}
+@keyframes unfold{from{opacity:0;transform:translateY(70px) scaleY(.15)}to{opacity:1;transform:none}}
+.ov.ltr{background:#000d}
+.ov.ltr .dlg{background:none;border:0;width:min(560px,100%)}
+.paper{background:repeating-linear-gradient(#f7ecd4 0 31px,#e9d9b6 32px),#f7ecd4;color:#3b2a1c;border:6px double #b99a5b;border-radius:6px;padding:1.4rem;font-size:clamp(1.3rem,4.5vw,1.75rem);line-height:32px;white-space:pre-wrap;overflow-wrap:anywhere;animation:unfold .8s ease-out;transform-origin:bottom;max-height:78vh;overflow:auto;box-shadow:0 10px 40px #000a}
+.dec{width:100%;max-width:260px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ===================================================================
+// ADMIN: Database/storage logic.
+// Data lives in this browser's localStorage (see README for limits).
+// To use a real shared backend later, only replace load() and save().
+// ===================================================================
+const KEY='petalnotes_db_v1';
+const uid=()=>Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-3);
+const DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+let db=load();
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.notes)return d}catch(e){}return seed()}
+function save(){localStorage.setItem(KEY,JSON.stringify(db))}
+
+// ADMIN: Sample content (the 7 default bouquets + 1 note). Edit or delete from the dashboard.
+function seed(){
+ const t=Date.now();
+ const mk=(i,day,fl,fi,wr,rb)=>({id:uid(),title:day+' bouquet (sample)',day,date:'',flowers:fl,fillers:fi,wrapping:wr,ribbon:rb,description:'Sample content. Edit or delete me.',hiddenLetter:'Dear you,\n\nThis is a sample letter.\nEdit it from the bouquet editor.\n\n- Ari',anim:'sway',createdAt:t-i*1000,updatedAt:t});
+ const all={lily:1,daisy:1,lotus:1,sunflower:1,rose:1,cherry:1,lavender:1,forget:1,jasmine:1};
+ return {
+  notes:[{id:uid(),title:'Welcome (sample note)',description:'Sample note. Edit or delete me.',content:'Hello!\n\nThis is a sample note. Edit or delete it from the Admin dashboard.',date:'',createdAt:t,updatedAt:t}],
+  bouquets:[
+   mk(6,'Monday',{lily:2,daisy:3},['babys'],'clear','pink'),
+   mk(5,'Tuesday',{lotus:4},['foliage','greenery','small'],'pink','lavender'),
+   mk(4,'Wednesday',{sunflower:3,lavender:4},['greenery'],'cream','black'),
+   mk(3,'Thursday',{rose:4,jasmine:3},['foliage','small'],'lavender','pink'),
+   mk(2,'Friday',{cherry:4,forget:4},['babys'],'clear','lavender'),
+   mk(1,'Saturday',all,['babys','foliage'],'cream','pink'),
+   mk(0,'Sunday',{lily:2,daisy:1,lotus:2,sunflower:2,rose:2,cherry:1,lavender:2,forget:1,jasmine:1},['babys','greenery','small'],'black','pink')],
+  comments:[],notifs:[]};
+}
+
+// ===================================================================
+// AUTH: passwords are stored only as salted SHA-256 hashes (not plain text).
+// NOTE: this is front-end only. See README "Security" section.
+// ===================================================================
+const USERS={
+ ARI:{role:'admin',h:'c78a35418c62cae28e62daef92605ba9e733412dee674bad9069cf02ab010d54'},
+ RIDHANSHU:{role:'user',h:'58269e3653edbd1368c4647380ba2a8236c85cfc6f39cc92cc32ca80b7071c29'}};
+async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('petal:'+s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+let me=JSON.parse(sessionStorage.getItem('pn_me')||'null');
+const isAdmin=()=>me&&me.role==='admin';
+
+// ===================================================================
+// BOUQUET LIBRARY + RENDERER (pure SVG, no images)
+// ===================================================================
+const FL={
+ lily:{n:'Lily',t:'p',k:6,l:26,w:8,c:'#fff0f6',c2:'#ff8fb8',m:'#ffb84d'},
+ daisy:{n:'Daisy',t:'p',k:14,l:17,w:3.2,c:'#fff',c2:'#e0d6c0',m:'#ffd23f',mr:5},
+ babys:{n:"Baby's breath",t:'d'},
+ lotus:{n:'Lotus',t:'p',k:9,l:27,w:8,c:'#ffd0e4',c2:'#ff9cc6',m:'#ffe08a',two:1},
+ sunflower:{n:'Sunflower',t:'p',k:16,l:24,w:5,c:'#ffc928',c2:'#e69a00',m:'#5a3418',mr:11},
+ rose:{n:'Pink rose',t:'r',c:'#ff9cc2',c2:'#e0608f'},
+ cherry:{n:'Cherry blossom',t:'p',k:5,l:17,w:9,c:'#ffe3ee',c2:'#ffb3cf',m:'#e0608f'},
+ lavender:{n:'Lavender',t:'s',c:'#a98be0',c2:'#7d5cc4'},
+ forget:{n:'Forget-me-not',t:'p',k:5,l:10,w:5,c:'#8fb8ff',c2:'#5f8fe6',m:'#ffe066',mr:2.5},
+ jasmine:{n:'Jasmine',t:'p',k:5,l:15,w:4.5,c:'#fff',c2:'#e9e3d6',m:'#ffe9a8'}};
+const FI={babys:{n:"Baby's breath"},foliage:{n:'Foliage'},greenery:{n:'Greenery'},small:{n:'Small flowers'}};
+const WR={clear:{n:'Clear plastic',c:'#fff',o:.28},pink:{n:'Pink paper',c:'#ffb6d1',o:.95},cream:{n:'Cream paper',c:'#f6ecd6',o:.95},black:{n:'Black paper',c:'#1c1c1c',o:.96},lavender:{n:'Soft lavender paper',c:'#cdb4f0',o:.95}};
+const RB={pink:{n:'Pink',c:'#ff6fa5'},black:{n:'Black',c:'#262626'},lavender:{n:'Lavender',c:'#9b72d9'},cream:{n:'Cream',c:'#f3e6c4'}};
+
+// One flower head drawn around (0,0).
+function head(k){
+ const f=FL[k];
+ if(f.t==='d')return [[-8,-4],[6,-9],[0,5],[10,3],[-12,6],[-3,-14],[13,-6]].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="3.4" fill="#fff" stroke="#e8e0d0" stroke-width=".6"/>`).join('');
+ if(f.t==='s'){let s='';for(let j=0;j<7;j++){const y=10-j*6.5;s+=`<circle cx="-3.5" cy="${y}" r="${4.6-j*.4}" fill="${f.c}"/><circle cx="3.5" cy="${y-3}" r="${4.4-j*.4}" fill="${f.c2}"/>`}return s}
+ if(f.t==='r')return `<circle r="17" fill="${f.c}"/><circle r="12" fill="${f.c2}" opacity=".55"/><path d="M-9 0A9 9 0 0 1 9 0A6 6 0 0 1 -3 2A3 3 0 0 1 2 -1" fill="none" stroke="${f.c2}" stroke-width="2.2"/><circle r="5" fill="${f.c}" stroke="${f.c2}" stroke-width="1.5"/>`;
+ let s='';
+ const ring=(k,l,w,c,rot)=>{for(let i=0;i<k;i++)s+=`<ellipse cy="${-l/2}" rx="${w}" ry="${l/2}" fill="${c}" stroke="${f.c2}" stroke-width=".7" transform="rotate(${rot+i*360/k})"/>`};
+ ring(f.k,f.l,f.w,f.c,0);
+ if(f.two)ring(f.k,f.l*.65,f.w*.8,f.c2,20);
+ return s+`<circle r="${f.mr||4}" fill="${f.m}"/>`;
+}
+// One filler sprig at x,y rotated by a degrees.
+function filler(k,x,y,a){
+ let s=`<g transform="translate(${x} ${y}) rotate(${a})"><g class="sw">`;
+ if(k==='babys')s+=`<path d="M0 40V0M0 20L-10 5M0 26L11 8" stroke="#6aa874" fill="none"/>`+[[0,0],[-10,5],[11,8],[-5,-6],[6,-4]].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="#fff"/>`).join('');
+ else if(k==='small')s+=`<path d="M0 40V0" stroke="#6aa874"/>`+[[0,0,'#ffb3cf'],[-6,8,'#c9b3f2'],[6,12,'#ffb3cf'],[-3,20,'#c9b3f2']].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="3.8" fill="${p[2]}"/>`).join('');
+ else{const c=k==='foliage'?'#5fa56d':'#3f8a55',ry=k==='foliage'?7:12;s+=`<path d="M0 40V-24" stroke="#4a8a5a" fill="none"/>`;for(let j=0;j<5;j++)s+=`<ellipse cx="-6" cy="${-j*8}" rx="3" ry="${ry}" fill="${c}" transform="rotate(-40 -6 ${-j*8})"/><ellipse cx="6" cy="${-j*8-4}" rx="3" ry="${ry}" fill="${c}" transform="rotate(40 6 ${-j*8-4})"/>`}
+ return s+'</g></g>';
+}
+// ADMIN: This displays the bouquet (flowers + stems + leaves + fillers + wrapping + ribbon + hidden letter).
+function bouquetSVG(b,o={}){
+ const W=WR[b.wrapping]||WR.clear,R=(RB[b.ribbon]||RB.pink).c;
+ let hs=[];
+ Object.entries(b.flowers||{}).forEach(([k,n])=>{for(let i=0;i<n&&FL[k];i++)hs.push(k)});
+ hs=hs.slice(0,16);
+ let sd=hs.length*37+5;const rnd=()=>(sd=(sd*9301+49297)%233280)/233280;
+ for(let i=hs.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[hs[i],hs[j]]=[hs[j],hs[i]]}
+ const N=hs.length||1;let stems='',heads='',leaves='',fills='';
+ hs.forEach((k,i)=>{
+  const a=(-50+100*(i+.5)/N)*Math.PI/180,r=(i%2?72:108)+rnd()*10;
+  const x=150+Math.sin(a)*r*1.15,y=235-Math.cos(a)*r*.9;
+  stems+=`<path d="M150 285Q${(150+(x-150)*.3).toFixed(1)} ${((y+285)/2).toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)}" stroke="#5f9f6b" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+  heads+=`<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"><g class="sw" style="animation-delay:-${(i*.7%4).toFixed(1)}s">${head(k)}</g></g>`;
+ });
+ [[96,170,-55],[204,170,55],[118,128,-32],[182,128,32],[150,112,0],[85,205,-65],[215,205,65]].forEach((p,i)=>{
+  leaves+=`<g transform="translate(${p[0]} ${p[1]}) rotate(${p[2]})"><g class="sw" style="animation-delay:-${i*.5}s"><ellipse rx="9" ry="26" fill="#4f9460"/><path d="M0 24V-22" stroke="#3a7a4c"/></g></g>`});
+ const fk=b.fillers||[];
+ if(fk.length)[[95,150,-30],[205,150,30],[120,95,-12],[180,95,12],[150,70,0],[78,190,-50],[222,190,50],[150,125,0]].forEach((p,i)=>{fills+=filler(fk[i%fk.length],p[0],p[1],p[2])});
+ const letter=`<g class="lt"><g transform="rotate(-6 150 190)"><rect x="132" y="168" width="36" height="46" rx="3" fill="#fbf1dc" stroke="#c9a96a"/><path d="M133 170L150 184L167 170" fill="none" stroke="#c9a96a"/><circle cx="150" cy="182" r="4.5" fill="#e0577d"/></g></g>`;
+ const hit=o.id?`<rect class="hit" data-act="letter" data-i="${o.id}" x="122" y="150" width="56" height="50" fill="transparent" tabindex="0" role="button" aria-label="Open the hidden letter"/>`:'';
+ return `<svg class="bq-svg ${o.cls||''}" viewBox="0 0 300 360" role="img" aria-label="Illustrated wrapped bouquet">`+
+  `<ellipse cx="150" cy="345" rx="60" ry="8" fill="#000" opacity=".35"/>`+
+  `<path d="M70 150Q150 95 230 150L170 335H130Z" fill="${W.c}" opacity="${W.o*.55}" stroke="#fff6"/>`+
+  leaves+stems+fills+heads+letter+
+  `<path d="M80 175Q150 205 220 175L172 336H128Z" fill="${W.c}" opacity="${W.o}" stroke="#fff8"/>`+
+  `<path d="M150 215L100 182M150 225L200 182M150 235L150 330" stroke="#fff" stroke-opacity=".35" fill="none"/>`+
+  `<path d="M106 258Q150 272 194 258L192 270Q150 284 108 270Z" fill="${R}" stroke="#0004"/>`+
+  `<ellipse cx="132" cy="268" rx="18" ry="9" fill="${R}" transform="rotate(-20 132 268)" stroke="#0004"/><ellipse cx="168" cy="268" rx="18" ry="9" fill="${R}" transform="rotate(20 168 268)" stroke="#0004"/><circle cx="150" cy="270" r="6" fill="${R}" stroke="#0004"/>`+
+  `<path d="M146 274L134 304M154 274L166 304" stroke="${R}" stroke-width="5" stroke-linecap="round"/>`+hit+`</svg>`;
+}
+
+// ===================================================================
+// SMALL HELPERS
+// ===================================================================
+const $=s=>document.querySelector(s),app=$('#app');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=t=>new Date(t).toLocaleString([],{dateStyle:'medium',timeStyle:'short'});
+const prev=(s,n=90)=>esc(s.length>n?s.slice(0,n)+'…':s);
+const nice=n=>n==='ARI'?'Ari':'Ridhanshu';
+const item=(t,i)=>(t==='note'?db.notes:db.bouquets).find(x=>x.id===i);
+const cnt=(t,i)=>db.comments.filter(c=>c.type===t&&c.itemId===i).length;
+const sel=(n,opts,cur)=>`<select name="${n}">${opts.map(([k,l])=>`<option value="${k}"${k===cur?' selected':''}>${esc(l)}</option>`).join('')}</select>`;
+const go=h=>{if(location.hash===h)route();else location.hash=h};
+const backHome=()=>{if(/^#\/(share\/)?(note|bouquet)\//.test(location.hash))location.hash='#/'};
+
+// ===================================================================
+// POPUP SYSTEM: every popup has X, Cancel, Escape, backdrop-click, and a discard check.
+// ===================================================================
+const stack=[];let askEl=null;
+function ov(render,o={}){
+ const d=document.createElement('div');d.className='ov '+(o.cls||'');
+ d.innerHTML=`<div class="dlg" role="dialog" aria-modal="true">${render()}</div>`;
+ const x={el:d,o:{...o,render},close(force){
+  if(!force&&o.dirty&&o.dirty()){ask(()=>x.close(true));return}
+  d.remove();const i=stack.indexOf(x);if(i>-1)stack.splice(i,1);
+  if(!stack.length)document.body.style.overflow='';
+  if(x.o.onclose)x.o.onclose();}};
+ d.addEventListener('click',e=>{if(e.target===d)x.close()});
+ stack.push(x);document.body.appendChild(d);document.body.style.overflow='hidden';
+ const f=d.querySelector('input,textarea');if(f&&!o.cls)f.focus();
+ return x;
+}
+function ask(onDiscard){
+ if(askEl)return;
+ askEl=document.createElement('div');askEl.className='ov ask';
+ askEl.innerHTML=`<div class="dlg" role="alertdialog" aria-modal="true"><h3>Discard unsaved changes?</h3><div class="row end"><button class="btn gh" id="keep">Keep Editing</button><button class="btn" id="disc">Discard</button></div></div>`;
+ document.body.appendChild(askEl);
+ const done=()=>{askEl.remove();askEl=null};
+ $('#keep').onclick=done;$('#disc').onclick=()=>{done();onDiscard()};$('#keep').focus();
+}
+function closeAll(){stack.slice().forEach(x=>{x.o.onclose=null;x.close(true)});if(askEl){askEl.remove();askEl=null}}
+function refreshTop(){const x=stack[stack.length-1];if(x)x.el.firstChild.innerHTML=x.o.render()}
+function refreshLive(){stack.forEach(x=>{if(x.o.live)x.el.firstChild.innerHTML=x.o.render()})}
+document.addEventListener('keydown',e=>{
+ if(e.key!=='Escape')return;
+ if(askEl){askEl.remove();askEl=null;return}
+ const t=stack[stack.length-1];if(t)t.close();
+});
+
+// ===================================================================
+// NOTIFICATIONS
+// ===================================================================
+// ADMIN: This creates notifications.
+function addN(to,text,hash){db.notifs.push({id:uid(),to,text,hash,read:false,createdAt:Date.now()})}
+const myN=()=>db.notifs.filter(n=>n.to===me.name).sort((a,b)=>b.createdAt-a.createdAt);
+function notifView(){
+ ov(()=>`<button class="x" data-act="close" aria-label="Close">✕</button><h2>Notifications</h2>`+
+  (myN().length?`<button class="btn sm gh" data-act="readall">Mark all as read</button>`+myN().map(n=>`<button class="nt ${n.read?'':'unread'}" data-act="gon" data-n="${n.id}" data-h="${esc(n.hash)}">${esc(n.text)}<small>${fmt(n.createdAt)}</small></button>`).join(''):`<p class="empty">You're all caught up ✨</p>`)+
+  `<div class="row end"><button class="btn gh" data-act="close">Close</button></div>`,{live:1});
+}
+// ADMIN: Activity area, a single list of every reply on every note and bouquet.
+function activityView(){
+ ov(()=>{const l=[...db.comments].sort((a,b)=>b.createdAt-a.createdAt);
+  return `<button class="x" data-act="close" aria-label="Close">✕</button><h2>Activity</h2>`+(l.length?l.map(c=>{const it=item(c.type,c.itemId);return `<button class="nt" data-act="gon" data-h="#/${c.type}/${c.itemId}"><b>${nice(c.author)}</b> on ${c.type} “${esc(it?it.title:'(deleted)')}”<small>${fmt(c.createdAt)}</small></button>`}).join(''):`<p class="empty">You're all caught up ✨</p>`)+`<div class="row end"><button class="btn gh" data-act="close">Close</button></div>`},{});
+}
+
+// ===================================================================
+// LOGIN VIEW
+// ===================================================================
+function loginView(){
+ const deco=['lily','cherry','rose','daisy','lavender'].map((k,i)=>`<g transform="translate(${30+i*60} 40)"><g class="sw" style="animation-delay:-${i}s">${head(k)}</g></g>`).join('');
+ app.innerHTML=`<main class="login"><form class="lc" id="lf" autocomplete="off"><svg class="dec" viewBox="0 0 300 80" role="img" aria-label="Decorative flowers">${deco}</svg><h1>Petal Notes</h1>
+ <label for="u">Username</label><input id="u" autocapitalize="characters" required>
+ <label for="p">Password</label><input id="p" type="password" required>
+ <p class="err" id="err" role="alert"></p><button class="btn">Login</button>
+ <p class="hint">Username: Your name in capitals.<br>Password: Your name in small letters.</p></form></main>`;
+}
+async function doLogin(){
+ const u=$('#u').value.trim(),U=USERS[u];let ok=false;
+ try{ok=!!U&&(await sha($('#p').value))===U.h}catch(e){$('#err').textContent='Please open this site over https (GitHub Pages) so login can work.';return}
+ if(ok){me={name:u,role:U.role};sessionStorage.setItem('pn_me',JSON.stringify(me));route()}
+ else $('#err').textContent='Wrong username or password. Check the hint below.';
+}
+
+// ===================================================================
+// HOME (Admin dashboard and User home share one layout)
+// ===================================================================
+function homeView(){
+ const A=isAdmin(),un=myN().filter(n=>!n.read).length;
+ const notes=[...db.notes].sort((a,b)=>b.createdAt-a.createdAt),bqs=[...db.bouquets].sort((a,b)=>b.createdAt-a.createdAt);
+ const nCol=`<section aria-label="Notes"><div class="sh"><h2>${A?'Notes':'Notes 💌'}</h2>${A?'<button class="btn" data-act="newnote">+ New Note</button>':''}</div>`+
+  (notes.length?notes.map(n=>`<article class="card"><h3>${esc(n.title)}</h3><p class="muted">${esc(n.date||fmt(n.createdAt))} · ${cnt('note',n.id)} comments</p><p>${prev(n.description||n.content)}</p><div class="row"><button class="btn sm" data-act="open" data-t="note" data-i="${n.id}">Open</button>${A?`<button class="btn sm gh" data-act="editnote" data-i="${n.id}">Edit</button><button class="btn sm gh" data-act="share" data-t="note" data-i="${n.id}">Copy Share Link</button><button class="btn sm gh" data-act="del" data-t="note" data-i="${n.id}">Delete</button>`:''}</div></article>`).join(''):'<p class="empty">Nothing here yet 💌</p>')+'</section>';
+ const bCol=`<section aria-label="Bouquets"><div class="sh"><h2>${A?'Bouquets':'Bouquets 🌸'}</h2>${A?'<button class="btn lv" data-act="newbq">+ New Bouquet</button>':''}</div>`+
+  (bqs.length?bqs.map(b=>`<article class="card bc"><div class="th">${bouquetSVG(b,{cls:'a-'+(b.anim||'sway')})}</div><div><h3>${esc(b.title)}</h3><p class="muted">${esc([b.day,b.date].filter(Boolean).join(' · '))} · ${cnt('bouquet',b.id)} replies</p><p class="muted">${esc(Object.entries(b.flowers).filter(e=>e[1]&&FL[e[0]]).map(e=>FL[e[0]].n+' ×'+e[1]).join(', '))}</p><div class="row"><button class="btn sm lv" data-act="open" data-t="bouquet" data-i="${b.id}">Open Bouquet</button>${A?`<button class="btn sm gh" data-act="editbq" data-i="${b.id}">Edit</button><button class="btn sm gh" data-act="share" data-t="bouquet" data-i="${b.id}">Copy Share Link</button><button class="btn sm gh" data-act="del" data-t="bouquet" data-i="${b.id}">Delete</button>`:''}</div></div></article>`).join(''):'<p class="empty">The garden is waiting for its first bloom 🌸</p>')+'</section>';
+ app.innerHTML=`<div class="wrap"><header class="top"><div><h1>PETAL NOTES</h1><p class="sub">${A?'Admin Space':'Hello, Ridhanshu 🌸'}</p></div><div class="row"><button class="btn gh sm" data-act="notifs">🔔 Notifications<span class="bd" ${un?'':'hidden'}>${un}</span></button>${A?'<button class="btn gh sm" data-act="activity">Activity</button>':''}<button class="btn gh sm" data-act="logout">Logout</button></div></header><div class="cols">${A?nCol+bCol:bCol+nCol}</div></div>`;
+}
+
+// ===================================================================
+// COMMENT THREADS (used by notes and bouquets)
+// ===================================================================
+// ADMIN: This loads user replies and lets the admin reply, edit and delete their own.
+function thread(t,i,panel){
+ const cs=db.comments.filter(c=>c.type===t&&c.itemId===i).sort((a,b)=>a.createdAt-b.createdAt);
+ return (cs.length?cs.map(c=>`<div class="cm ${c.author===me.name?'mine':''}"><b>${nice(c.author)}</b> <span class="muted">${fmt(c.createdAt)}</span><p>${esc(c.content)}</p>${isAdmin()&&c.author==='ARI'?`<button class="btn sm gh" data-act="cedit" data-i="${c.id}">Edit</button> <button class="btn sm gh" data-act="cdel" data-i="${c.id}">Delete</button>`:''}</div>`).join(''):'<p class="muted">No replies yet 💌</p>')+
+ `<label for="cm">Your reply</label><textarea id="cm" rows="3"></textarea><div class="row end"><button class="btn gh" data-act="${panel?'close':'clr'}">Cancel</button><button class="btn" data-act="send" data-t="${t}" data-i="${i}">Send Reply</button></div>`;
+}
+const draft=()=>{const c=$('#cm');return c&&c.value.trim()};
+function sendC(t,i){
+ const ta=$('#cm'),v=ta.value.trim();if(!v){ta.focus();return}
+ db.comments.push({id:uid(),type:t,itemId:i,author:me.name,content:v,createdAt:Date.now()});
+ const it=item(t,i);
+ addN(isAdmin()?'RIDHANSHU':'ARI',nice(me.name)+' replied on “'+it.title+'”','#/'+t+'/'+i);
+ save();refreshTop();homeView();
+}
+
+// ===================================================================
+// NOTE READING PAGE + EDITOR
+// ===================================================================
+function openNote(id){
+ if(!item('note',id)){go('#/');return}
+ ov(()=>{const n=item('note',id);return `<button class="x" data-act="close" aria-label="Close">✕</button><h2>${esc(n.title)}</h2><p class="muted">${esc(n.date||fmt(n.createdAt))}</p>${n.description?`<p><i>${esc(n.description)}</i></p>`:''}<div class="body">${esc(n.content)}</div>${isAdmin()?`<button class="btn sm gh" data-act="editnote" data-i="${id}">Edit note</button>`:''}<h3>Replies (${cnt('note',id)})</h3>${thread('note',id,false)}`},{cls:'full',live:1,dirty:draft,onclose:backHome});
+}
+// ADMIN: Controls creation and editing of notes.
+function noteEditor(id){
+ const n=id?item('note',id):{title:'',date:'',description:'',content:''};
+ const x=ov(()=>`<button class="x" data-act="close" aria-label="Close">✕</button><h2>${id?'Edit':'New'} Note</h2><form id="nf"><label>Title<input name="title" maxlength="80" value="${esc(n.title)}"></label><label>Date (optional)<input type="date" name="date" value="${esc(n.date)}"></label><label>Description (optional)<input name="description" value="${esc(n.description)}"></label><label>Letter / message<textarea name="content" rows="9">${esc(n.content)}</textarea></label><p class="err" id="ne"></p></form><div class="row end"><button class="btn gh" data-act="close">Cancel</button><button class="btn" data-act="savenote" data-i="${id||''}">Save</button></div>`,{dirty:()=>JSON.stringify(readNote())!==init});
+ const readNote=()=>{const f=$('#nf').elements;return {title:f.title.value.trim(),date:f.date.value,description:f.description.value.trim(),content:f.content.value}};
+ const init=JSON.stringify(readNote());
+ window.readNote=readNote;
+}
+function saveNote(id){
+ const v=window.readNote();if(!v.title){$('#ne').textContent='Please add a title.';return}
+ if(id)Object.assign(item('note',id),v,{updatedAt:Date.now()});
+ else{const n={id:uid(),...v,createdAt:Date.now(),updatedAt:Date.now()};db.notes.push(n);addN('RIDHANSHU','New note: '+n.title,'#/note/'+n.id)}
+ save();stack[stack.length-1].close(true);homeView();refreshLive();
+}
+
+// ===================================================================
+// BOUQUET EDITOR
+// ===================================================================
+let ed={fl:{}};
+// ADMIN: Controls editing of bouquets (flowers, fillers, wrapping, ribbon, hidden letter).
+function bqEditor(id){
+ const b=id?item('bouquet',id):{title:'',day:'Monday',date:'',flowers:{},fillers:[],wrapping:'clear',ribbon:'pink',description:'',hiddenLetter:'',anim:'sway'};
+ ed={fl:{...b.flowers}};
+ const x=ov(()=>`<button class="x" data-act="close" aria-label="Close">✕</button><h2>${id?'Edit':'New'} Bouquet</h2><form id="bf">
+ <label>Title<input name="title" maxlength="80" value="${esc(b.title)}"></label>
+ <div class="g2"><label>Day${sel('day',DAYS.map(d=>[d,d]),b.day)}</label><label>Date (optional)<input type="date" name="date" value="${esc(b.date)}"></label></div>
+ <div class="pv" id="pv"></div>
+ <h3>Flowers <span class="muted">(up to 16 are drawn)</span></h3>${Object.entries(FL).map(([k,f])=>`<div class="fr"><svg viewBox="-30 -35 60 60" width="38" height="38" aria-hidden="true">${head(k)}</svg><span>${f.n}</span><button type="button" class="btn sm gh" data-act="fl-" data-k="${k}" aria-label="Fewer ${f.n}">−</button><b id="c-${k}">${ed.fl[k]||0}</b><button type="button" class="btn sm gh" data-act="fl+" data-k="${k}" aria-label="More ${f.n}">+</button></div>`).join('')}
+ <h3>Fillers</h3><div class="chips">${Object.entries(FI).map(([k,f])=>`<label class="chip"><input type="checkbox" name="fi" value="${k}" ${(b.fillers||[]).includes(k)?'checked':''}> ${f.n}</label>`).join('')}</div>
+ <div class="g2"><label>Wrapping${sel('wrapping',Object.entries(WR).map(([k,v])=>[k,v.n]),b.wrapping)}</label><label>Ribbon${sel('ribbon',Object.entries(RB).map(([k,v])=>[k,v.n]),b.ribbon)}</label></div>
+ <label>Animation${sel('anim',[['sway','Gentle sway'],['calm','Very calm'],['none','None']],b.anim||'sway')}</label>
+ <label>Description<input name="description" value="${esc(b.description)}"></label>
+ <label>Hidden letter<textarea name="hiddenLetter" rows="7">${esc(b.hiddenLetter)}</textarea></label><p class="err" id="be"></p></form>
+ <div class="row end"><button class="btn gh" data-act="close">Cancel</button><button class="btn lv" data-act="savebq" data-i="${id||''}">Save Bouquet</button></div>`,{dirty:()=>JSON.stringify(readEd())!==init});
+ const init=JSON.stringify(readEd());
+ refreshEd();$('#bf').addEventListener('input',refreshEd);
+}
+function readEd(){
+ const f=$('#bf').elements;
+ return {title:f.title.value.trim(),day:f.day.value,date:f.date.value,description:f.description.value.trim(),hiddenLetter:f.hiddenLetter.value,wrapping:f.wrapping.value,ribbon:f.ribbon.value,anim:f.anim.value,
+  flowers:Object.fromEntries(Object.entries(ed.fl).filter(e=>e[1]>0)),fillers:[...$('#bf').querySelectorAll('[name=fi]:checked')].map(i=>i.value)};
+}
+function refreshEd(){const v=readEd();$('#pv').innerHTML=bouquetSVG(v,{cls:'a-'+v.anim})}
+function saveBq(id){
+ const v=readEd();
+ if(!v.title){$('#be').textContent='Please add a title.';return}
+ if(!Object.keys(v.flowers).length){$('#be').textContent='Add at least one flower.';return}
+ if(id)Object.assign(item('bouquet',id),v,{updatedAt:Date.now()});
+ else{const b={id:uid(),...v,createdAt:Date.now(),updatedAt:Date.now()};db.bouquets.push(b);addN('RIDHANSHU','New bouquet: '+b.title,'#/bouquet/'+b.id)}
+ save();stack[stack.length-1].close(true);homeView();refreshLive();
+}
+
+// ===================================================================
+// BOUQUET EXPERIENCE + HIDDEN LETTER + REPLY PANEL
+// ===================================================================
+function openBouquet(id){
+ if(!item('bouquet',id)){go('#/');return}
+ ov(()=>{const b=item('bouquet',id);return `<button class="x" data-act="close" aria-label="Close bouquet">✕</button><h2 class="bt">${esc(b.title)}</h2><div class="stage">${bouquetSVG(b,{id,cls:'rise a-'+(b.anim||'sway')})}</div><p class="script">A bouquet for you</p><p class="muted">${esc(b.description)}</p><button class="btn lv" data-act="letter" data-i="${id}">Open Hidden Letter</button><button class="btn fab" data-act="reply" data-i="${id}">Reply? 💌</button>`},{cls:'bq',live:1,onclose:backHome});
+}
+// ADMIN: This opens the hidden letter (letter slides out of the bouquet, then unfolds).
+function revealLetter(id){
+ const svg=$('.ov.bq .bq-svg'),wait=matchMedia('(prefers-reduced-motion: reduce)').matches?0:650;
+ if(svg)svg.classList.add('open');
+ setTimeout(()=>ov(()=>`<button class="x" data-act="close" aria-label="Close letter">✕</button><div class="paper">${esc(item('bouquet',id).hiddenLetter||'(This letter is still blank.)')}</div>`,{cls:'ltr',onclose:()=>{const s=$('.ov.bq .bq-svg');if(s)s.classList.remove('open')}}),wait);
+}
+// ADMIN: Controls user replies on bouquets.
+function replyPanel(id){
+ ov(()=>`<button class="x" data-act="close" aria-label="Close">✕</button><h2>Replies 💌</h2>${thread('bouquet',id,true)}`,{live:1,dirty:draft});
+}
+
+// ===================================================================
+// DELETE / SHARE
+// ===================================================================
+function del(t,i){
+ if(!confirm('Delete this '+t+' and its replies? This cannot be undone.'))return;
+ if(t==='note')db.notes=db.notes.filter(x=>x.id!==i);else db.bouquets=db.bouquets.filter(x=>x.id!==i);
+ db.comments=db.comments.filter(c=>!(c.type===t&&c.itemId===i));save();homeView();
+}
+// ADMIN: Share link contains only an id; the page still requires login.
+function share(t,i){
+ const u=location.href.split('#')[0]+'#/share/'+t+'/'+i;
+ (navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>alert('Share link copied!'),()=>prompt('Copy this link:',u));
+}
+
+// ===================================================================
+// CLICK HANDLER + ROUTER
+// ===================================================================
+document.addEventListener('click',e=>{
+ const t=e.target.closest('[data-act]');if(!t)return;
+ const d=t.dataset,top=stack[stack.length-1];
+ switch(d.act){
+  case 'close':if(top)top.close();break;
+  case 'newnote':noteEditor();break;
+  case 'editnote':noteEditor(d.i);break;
+  case 'newbq':bqEditor();break;
+  case 'editbq':bqEditor(d.i);break;
+  case 'open':go('#/'+d.t+'/'+d.i);break;
+  case 'del':del(d.t,d.i);break;
+  case 'share':share(d.t,d.i);break;
+  case 'savenote':saveNote(d.i);break;
+  case 'savebq':saveBq(d.i);break;
+  case 'fl+':case 'fl-':ed.fl[d.k]=Math.max(0,(ed.fl[d.k]||0)+(d.act==='fl+'?1:-1));$('#c-'+d.k).textContent=ed.fl[d.k];refreshEd();break;
+  case 'notifs':notifView();break;
+  case 'activity':activityView();break;
+  case 'readall':myN().forEach(n=>n.read=true);save();refreshTop();homeView();break;
+  case 'gon':{const n=db.notifs.find(x=>x.id===d.n);if(n){n.read=true;save()}closeAll();go(d.h);break}
+  case 'send':sendC(d.t,d.i);break;
+  case 'clr':$('#cm').value='';break;
+  case 'cedit':{const c=db.comments.find(x=>x.id===d.i),v=prompt('Edit your reply:',c.content);if(v&&v.trim()){c.content=v.trim();save();refreshTop()}break}
+  case 'cdel':if(confirm('Delete this reply?')){db.comments=db.comments.filter(x=>x.id!==d.i);save();refreshTop();homeView()}break;
+  case 'letter':revealLetter(d.i);break;
+  case 'reply':replyPanel(d.i);break;
+  case 'logout':me=null;sessionStorage.removeItem('pn_me');closeAll();location.hash='';route();break;
+ }
+});
+document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches&&e.target.matches('.hit')){e.preventDefault();e.target.dispatchEvent(new MouseEvent('click',{bubbles:true}))}});
+document.addEventListener('submit',e=>{e.preventDefault();if(e.target.id==='lf')doLogin()});
+
+// ADMIN: Routes: #/note/ID, #/bouquet/ID, #/share/note/ID, #/share/bouquet/ID. Not logged in -> login first, then straight to the item.
+function route(){
+ closeAll();
+ if(!me)return loginView();
+ const p=location.hash.replace(/^#\/?/,'').split('/');
+ if(p[0]==='share')p.shift();
+ homeView();
+ if(p[0]==='note'&&p[1])openNote(p[1]);
+ if(p[0]==='bouquet'&&p[1])openBouquet(p[1]);
+}
+window.addEventListener('hashchange',route);
+route();
+</script>
+</body>
+</html>
